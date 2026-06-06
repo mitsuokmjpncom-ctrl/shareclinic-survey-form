@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シェアクリ 事前アンケート</title>
+<style>
+:root {
+  --line-green: #06C755;
+  --line-green-dark: #04A847;
+  --line-green-light: #E8F8EE;
+  --bg: #ECEFF1;
+  --card: #FFFFFF;
+  --text: #1C2024;
+  --mute: #6F7682;
+  --border: #E1E4E8;
+  --accent: #128C84;
+  --pink: #C7497B;
+  --pink-light: #FCE9F1;
+  --warn-bg: #FFF3DD;
+  --warn-border: #E8B463;
+  --warn-text: #8B5A00;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+.outer { width: 100%; max-width: 480px; }
+.app {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
+}
+.header {
+  background: var(--line-green);
+  color: white;
+  padding: 14px 18px 16px;
+}
+.header-row { display: flex; align-items: center; justify-content: space-between; }
+.header-title { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; }
+.header-sub { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+.progress {
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  margin-top: 14px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: white;
+  transition: width 0.35s ease;
+  width: 0%;
+}
+.content { padding: 22px 18px 28px; flex: 1; }
+.step-label {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--line-green-light);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.q-title { font-size: 18px; font-weight: 700; line-height: 1.45; margin-bottom: 8px; }
+.q-note { font-size: 12px; color: var(--mute); margin-bottom: 18px; }
+.q-context {
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--line-green-light);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.option {
+  border: 1.5px solid var(--border);
+  background: white;
+  padding: 13px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  transition: all 0.15s;
+  user-select: none;
+}
+.option:active { transform: scale(0.99); }
+.option.selected {
+  border-color: var(--line-green);
+  background: var(--line-green-light);
+  font-weight: 600;
+}
+.option.branch { padding: 16px 14px; border-radius: 12px; }
+.option.branch.selected { background: var(--line-green-light); }
+.checkbox {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  background: white;
+}
+.option.selected .checkbox { background: var(--line-green); border-color: var(--line-green); }
+.radio {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: white;
+  position: relative;
+}
+.option.selected .radio { border-color: var(--line-green); }
+.option.selected .radio::after {
+  content: ''; position: absolute;
+  width: 10px; height: 10px;
+  top: 3px; left: 3px;
+  background: var(--line-green);
+  border-radius: 50%;
+}
+.option-text { flex: 1; line-height: 1.4; }
+.option-sub { display: block; font-size: 11px; color: var(--mute); margin-top: 3px; font-weight: 400; }
+.btn-row { display: flex; gap: 8px; margin-top: 18px; }
+.btn {
+  flex: 1;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--line-green); color: white; }
+.btn-primary:disabled { background: #C8E6CC; cursor: not-allowed; opacity: 0.7; }
+.btn-secondary { background: #F0F2F4; color: var(--text); flex: 0 0 90px; }
+.btn-full { width: 100%; }
+.intro-screen { text-align: center; padding: 30px 10px 20px; }
+.intro-icon-wrap {
+  width: 84px; height: 84px;
+  border-radius: 50%;
+  background: var(--line-green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 40px;
+}
+.intro-title { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+.intro-desc { font-size: 14px; color: var(--mute); line-height: 1.7; margin-bottom: 26px; }
+.required-note {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.booking-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.booking-tab {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+.booking-tab.active { border-color: var(--line-green); background: var(--line-green-light); color: var(--accent); }
+.booking-tab-day { display: block; font-size: 11px; color: var(--mute); font-weight: 500; margin-top: 2px; }
+.booking-tab.active .booking-tab-day { color: var(--accent); }
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.time-slot {
+  padding: 11px 4px;
+  border: 1.5px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+.time-slot:active { transform: scale(0.97); }
+.time-slot.selected { background: var(--line-green); color: white; border-color: var(--line-green); }
+.summary-card {
+  background: var(--line-green-light);
+  border: 1.5px solid var(--line-green);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.summary-label { font-size: 11px; color: var(--accent); font-weight: 700; }
+.summary-value { font-size: 17px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.completion-screen, .end-screen { text-align: center; padding: 24px 10px; }
+.complete-icon-wrap {
+  width: 84px; height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  font-size: 44px;
+}
+.complete-icon-wrap.success { background: var(--line-green-light); color: var(--line-green); }
+.complete-icon-wrap.end { background: #F0F2F4; color: var(--mute); }
+.complete-icon-wrap.error { background: #FCE6E1; color: #C9583F; }
+.complete-title { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+.complete-detail {
+  background: var(--line-green-light);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 14px 0;
+  text-align: left;
+}
+.complete-detail-label { font-size: 11px; color: var(--mute); margin-bottom: 4px; }
+.complete-detail-value { font-size: 17px; font-weight: 700; color: var(--accent); }
+.complete-detail-row { padding: 6px 0; }
+.complete-foot { font-size: 13px; color: var(--mute); line-height: 1.6; margin-top: 14px; padding: 0 6px; }
+.line-back-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: var(--line-green);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.loading-overlay.active { display: flex; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 4px solid #E1E4E8;
+  border-top: 4px solid var(--line-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.28s ease; }
+</style>
+</head>
+<body>
+<div class="outer">
+  <div class="app">
+    <div class="header">
+      <div class="header-row">
+        <div>
+          <div class="header-title">シェアクリ</div>
+          <div class="header-sub" id="header-sub">事前アンケート</div>
+        </div>
+        <div style="font-size:11px; opacity:0.85" id="header-step"></div>
+      </div>
+      <div class="progress" id="progress-wrap" style="display:none">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<script>
+// ============================================================
+// 設定 — 本番デプロイ前に下記の GAS_URL を更新してください
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbybPk57whtThzppNyjdIcmQum_-JxtFyqKrtil7CbEoy3xzcsBDUw-bycbpGjLkoBl/exec';
+const LINE_OA_BASIC_ID = '@your_oa_id'; // 例: '@123abcde' (任意・完了画面のLINEに戻るリンク用)
+
+// ============================================================
+// 質問データ
+// ============================================================
+const QUESTIONS_BASE = [
+  {
+    id: 'Q1', title: 'Q1. 髪のお悩み',
+    question: '気になる髪のお悩みを教えてください',
+    note: '複数選択可',
+    type: 'multi',
+    options: ['抜け毛・薄毛', 'パサつき・乾燥', 'ボリュームダウン', 'カラーダメージ', '白髪', 'うねり・くせ', 'その他', '特になし']
+  },
+  {
+    id: 'Q2', title: 'Q2. 髪以外で気になっていること',
+    question: '髪以外で最近気になっていることはありますか？',
+    note: '複数選択可・任意',
+    type: 'multi_optional',
+    options: ['肌・肌荒れ・ニキビ', '体型・ダイエット', '睡眠・疲れ・ストレス', 'ホルモン・月経・更年期', '栄養・体調・冷え', '特になし']
+  },
+  {
+    id: 'Q3', title: 'Q3. 専門家への相談',
+    question: '今日のお話、もっと専門家に聞いてみたいですか？',
+    note: '',
+    type: 'branch',
+    options: [
+      { label: 'はい、詳しく聞きたい', value: 'A', sub: '→ オンライン相談を予約します (当日/翌日)' },
+      { label: 'いまはまだ大丈夫', value: 'B', sub: '→ もう少し質問にお答えください' }
+    ]
+  }
+];
+
+const QUESTIONS_B = [
+  {
+    id: 'Q4', title: 'Q4. ヘアケアについて',
+    question: '普段のヘアケアの傾向を教えてください',
+    note: '複数選択可',
+    context: '髪質改善のヒントを見つけるための質問です',
+    type: 'multi',
+    options: ['市販のシャンプー', 'サロンのシャンプー', 'トリートメント月1回以上', 'ヘアパック・オイル', '特にケアしていない']
+  },
+  {
+    id: 'Q5', title: 'Q5. 食事について',
+    question: '髪の材料となる栄養素、不足している実感はありますか？',
+    note: '複数選択可',
+    context: '髪はタンパク質・鉄・ビタミンから作られます',
+    type: 'multi',
+    options: [
+      'タンパク質(肉・魚・卵・豆)が不足しがち',
+      '鉄分・ミネラルが足りていない気がする',
+      '野菜・ビタミンが足りない',
+      '外食・コンビニ食が多い',
+      '髪に良い食事を意識している',
+      '特に気にしていない'
+    ]
+  },
+  {
+    id: 'Q6', title: 'Q6. 睡眠について',
+    question: '髪は睡眠中に育ちます。睡眠の状態はいかがですか？',
+    note: '複数選択可',
+    context: '成長ホルモンが分泌される深い睡眠が、髪の成長に直結します',
+    type: 'multi',
+    options: [
+      '睡眠時間が6時間未満の日が多い',
+      '寝つきが悪い・眠りが浅い',
+      '夜更かしが多い',
+      '夜中に目が覚める',
+      'よく眠れている',
+      '改善したいけど難しい'
+    ]
+  },
+  {
+    id: 'Q7', title: 'Q7. 今後の通い方',
+    question: '今後の通い方や気になることを教えてください',
+    note: '複数選択可',
+    type: 'multi',
+    options: ['月1回ペース', '2ヶ月に1回ペース', '困った時だけ', '内側ケアにも興味あり', '特にこだわりなし']
+  },
+  {
+    id: 'Q8', title: 'Q8. 最後の確認',
+    question: 'インナービューティーについて、専門家に詳しく聞いてみたいですか？',
+    note: '',
+    type: 'branch',
+    options: [
+      { label: 'はい、聞いてみたい', value: 'BOOK', sub: '→ オンライン相談を予約します' },
+      { label: 'いまはまだ大丈夫', value: 'END', sub: '→ アンケートを終了します' }
+    ]
+  }
+];
+
+// ============================================================
+// 状態管理
+// ============================================================
+function getUidFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('uid') || params.get('user_id') || '';
+}
+
+let state = {
+  screen: 'intro',
+  qIndex: 0,
+  questions: QUESTIONS_BASE.slice(),
+  branch: null,
+  answers: {},
+  bookingDate: 'today',
+  bookingSlot: null,
+  uid: getUidFromUrl(),
+  startedAt: new Date().toISOString()
+};
+
+const $content = document.getElementById('content');
+const $progressWrap = document.getElementById('progress-wrap');
+const $progressBar = document.getElementById('progress-bar');
+const $headerSub = document.getElementById('header-sub');
+const $headerStep = document.getElementById('header-step');
+const $loading = document.getElementById('loading-overlay');
+
+function updateProgress() {
+  if (['intro','completion','end','error'].includes(state.screen)) {
+    $progressWrap.style.display = 'none';
+    $headerStep.textContent = '';
+    return;
+  }
+  $progressWrap.style.display = 'block';
+  const totalSteps = state.branch === 'B' ? 9 : 4;
+  let current = state.qIndex + 1;
+  if (state.screen === 'booking') current = totalSteps;
+  $progressBar.style.width = ((current / totalSteps) * 100) + '%';
+  $headerStep.textContent = current + ' / ' + totalSteps;
+}
+
+// ============================================================
+// レンダリング
+// ============================================================
+function renderIntro() {
+  $headerSub.textContent = '事前アンケート';
+  $content.innerHTML = `
+    <div class="intro-screen fade-in">
+      <div class="intro-icon-wrap">📋</div>
+      <div class="intro-title">事前アンケート</div>
+      <div class="intro-desc">
+        本日のカウンセリングを<br>
+        スムーズに進めるため、<br>
+        簡単なアンケートにご協力ください。<br><br>
+        所要時間：約3分
+      </div>
+      <button class="btn btn-primary btn-full" onclick="startSurvey()">アンケートを始める</button>
+    </div>
+  `;
+  updateProgress();
+}
+
+function startSurvey() {
+  state.screen = 'question';
+  state.qIndex = 0;
+  render();
+}
+
+function renderQuestion() {
+  const q = state.questions[state.qIndex];
+  if (!q) return;
+  $headerSub.textContent = q.title;
+
+  const ans = state.answers[q.id];
+  const isMulti = q.type === 'multi' || q.type === 'multi_optional';
+  const isBranch = q.type === 'branch';
+
+  let html = `<div class="fade-in">
+    <div class="step-label">${q.title}</div>
+    <div class="q-title">${escapeHtml(q.question)}</div>
+    ${q.note ? `<div class="q-note">${escapeHtml(q.note)}</div>` : ''}
+    ${q.context ? `<div class="q-context">💡 ${escapeHtml(q.context)}</div>` : ''}
+    <div class="options">`;
+
+  if (isBranch) {
+    q.options.forEach((opt) => {
+      const sel = ans === opt.value ? 'selected' : '';
+      html += `<div class="option branch ${sel}" onclick="selectBranch('${q.id}', '${opt.value}')">
+        <div class="radio"></div>
+        <div class="option-text">
+          <div>${escapeHtml(opt.label)}</div>
+          <span class="option-sub">${escapeHtml(opt.sub)}</span>
+        </div>
+      </div>`;
+    });
+  } else {
+    q.options.forEach((opt, i) => {
+      const arr = ans || [];
+      const sel = arr.includes(opt) ? 'selected' : '';
+      html += `<div class="option ${sel}" onclick="selectOption('${q.id}', ${i}, '${q.type}')">
+        <div class="checkbox">✓</div>
+        <div class="option-text">${escapeHtml(opt)}</div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  if (!isBranch) {
+    const arr = ans || [];
+    const canProceed = q.type === 'multi_optional' || arr.length > 0;
+    html += `<div class="btn-row">`;
+    if (state.qIndex > 0) {
+      html += `<button class="btn btn-secondary" onclick="prevQuestion()">戻る</button>`;
+    }
+    html += `<button class="btn btn-primary" onclick="nextQuestion()" ${canProceed ? '' : 'disabled'}>次へ</button>`;
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectOption(qid, idx, type) {
+  const q = state.questions.find(x => x.id === qid);
+  const opt = q.options[idx];
+  if (!state.answers[qid]) state.answers[qid] = [];
+  if (type === 'single') {
+    state.answers[qid] = [opt];
+  } else {
+    const arr = state.answers[qid];
+    const i = arr.indexOf(opt);
+    if (i >= 0) arr.splice(i, 1);
+    else arr.push(opt);
+  }
+  renderQuestion();
+}
+
+function selectBranch(qid, value) {
+  state.answers[qid] = value;
+  if (qid === 'Q3') {
+    if (value === 'A') {
+      state.branch = 'A';
+      state.screen = 'booking';
+      render();
+    } else {
+      state.branch = 'B';
+      state.questions = QUESTIONS_BASE.slice().concat(QUESTIONS_B);
+      state.qIndex++;
+      render();
+    }
+  } else if (qid === 'Q8') {
+    if (value === 'BOOK') {
+      state.screen = 'booking';
+      render();
+    } else {
+      // BルートでENDを選んだ場合も回答は送信
+      submitAnswers().then(() => {
+        state.screen = 'end';
+        render();
+      });
+    }
+  }
+}
+
+function nextQuestion() {
+  if (state.qIndex < state.questions.length - 1) {
+    state.qIndex++;
+    render();
+  }
+}
+
+function prevQuestion() {
+  if (state.qIndex > 0) {
+    state.qIndex--;
+    render();
+  }
+}
+
+// ============================================================
+// 予約画面
+// ============================================================
+function generateTimeSlots(isToday) {
+  const slots = [];
+  const startH = isToday ? 18 : 10;
+  const endH = 21;
+  for (let h = startH; h <= endH; h++) {
+    slots.push(pad(h) + ':00');
+    if (h < endH) slots.push(pad(h) + ':30');
+  }
+  return slots;
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function renderBooking() {
+  $headerSub.textContent = '予約画面';
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const wd = ['日','月','火','水','木','金','土'];
+  const fmt = (d) => `${d.getMonth() + 1}/${d.getDate()} (${wd[d.getDay()]})`;
+  const todayLabel = fmt(today);
+  const tomorrowLabel = fmt(tomorrow);
+
+  const isToday = state.bookingDate === 'today';
+  const slots = generateTimeSlots(isToday);
+
+  let html = `<div class="fade-in">
+    <div class="step-label">最終ステップ</div>
+    <div class="q-title">オンライン相談の日時を選択</div>
+    <div class="q-note">カウンセラーとの30分のオンライン相談です</div>
+    <div class="required-note">★ 当日中の予約をおすすめしています</div>
+    <div class="booking-tabs">
+      <div class="booking-tab ${isToday ? 'active' : ''}" onclick="selectDate('today')">
+        当日 <span class="booking-tab-day">${todayLabel}</span>
+      </div>
+      <div class="booking-tab ${!isToday ? 'active' : ''}" onclick="selectDate('tomorrow')">
+        翌日 <span class="booking-tab-day">${tomorrowLabel}</span>
+      </div>
+    </div>
+    <div class="time-grid">`;
+  slots.forEach(slot => {
+    const sel = state.bookingSlot === slot ? 'selected' : '';
+    html += `<div class="time-slot ${sel}" onclick="selectSlot('${slot}')">${slot}</div>`;
+  });
+  html += `</div>`;
+  if (state.bookingSlot) {
+    html += `<div class="summary-card">
+      <div class="summary-label">選択中の予約枠</div>
+      <div class="summary-value">${isToday ? todayLabel : tomorrowLabel} ${state.bookingSlot}〜</div>
+    </div>`;
+  }
+  html += `<button class="btn btn-primary btn-full" onclick="confirmBooking()" ${state.bookingSlot ? '' : 'disabled'}>
+    この日時で予約を確定する
+  </button>`;
+  html += `</div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectDate(d) { state.bookingDate = d; state.bookingSlot = null; render(); }
+function selectSlot(slot) { state.bookingSlot = slot; render(); }
+
+async function confirmBooking() {
+  const ok = await submitAnswers();
+  if (ok) {
+    state.screen = 'completion';
+    render();
+  }
+}
+
+// ============================================================
+// 送信処理
+// ============================================================
+async function submitAnswers() {
+  $loading.classList.add('active');
+  const payload = {
+    uid: state.uid,
+    branch: state.branch || 'A',
+    startedAt: state.startedAt,
+    submittedAt: new Date().toISOString(),
+    q1: (state.answers.Q1 || []).join('|'),
+    q2: (state.answers.Q2 || []).join('|'),
+    q3: state.answers.Q3 || '',
+    q4: (state.answers.Q4 || []).join('|'),
+    q5: (state.answers.Q5 || []).join('|'),
+    q6: (state.answers.Q6 || []).join('|'),
+    q7: (state.answers.Q7 || []).join('|'),
+    q8: state.answers.Q8 || '',
+    bookingDate: state.screen === 'booking' || state.bookingSlot ? state.bookingDate : '',
+    bookingSlot: state.bookingSlot || '',
+    userAgent: navigator.userAgent
+  };
+
+  try {
+    // GAS は CORS の都合で no-cors モードで送信 (レスポンス確認はできないが書き込みは成功する)
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    $loading.classList.remove('active');
+    return true;
+  } catch (e) {
+    $loading.classList.remove('active');
+    state.screen = 'error';
+    render();
+    return false;
+  }
+}
+
+function renderCompletion() {
+  $headerSub.textContent = '予約完了';
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const date = state.bookingDate === 'today' ? today : tomorrow;
+  const wd = ['日','月','火','水','木','金','土'];
+  const fmt = (d) => `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 (${wd[d.getDay()]})`;
+
+  $content.innerHTML = `
+    <div class="completion-screen fade-in">
+      <div class="complete-icon-wrap success">✓</div>
+      <div class="complete-title">予約を受け付けました</div>
+      <div class="complete-detail">
+        <div class="complete-detail-row">
+          <div class="complete-detail-label">予約日時</div>
+          <div class="complete-detail-value">${fmt(date)}</div>
+          <div class="complete-detail-value">${state.bookingSlot}〜 (30分)</div>
+        </div>
+      </div>
+      <div class="complete-foot">
+        ご予約ありがとうございます。<br>
+        確認メッセージをLINEでお送りします。<br>
+        お時間になりましたら、カウンセラーから<br>
+        ご連絡いたします。
+      </div>
+      <a href="https://line.me/R/oaMessage/${LINE_OA_BASIC_ID}/" class="line-back-link">LINEに戻る</a>
+    </div>
+  `;
+  updateProgress();
+}
+
+function renderEnd() {
+  $headerSub.textContent = 'アンケート終了';
+  $content.innerHTML = `
+    <div class="end-screen fade-in">
+      <div class="complete-icon-wrap end">🙏</div>
+      <div class="complete-title">ご回答ありがとうございました</div>
+      <div class="complete-foot">
+        またお気軽にご相談ください。<br>
+        本日のご来店、ありがとうございました。
+      </div>
+      <a href="https://line.me/R/oaMessage/${LINE_OA_BASIC_ID}/" class="line-back-link">LINEに戻る</a>
+    </div>
+  `;
+  updateProgress();
+}
+
+function renderError() {
+  $headerSub.textContent = '送信エラー';
+  $content.innerHTML = `
+    <div class="end-screen fade-in">
+      <div class="complete-icon-wrap error">!</div>
+      <div class="complete-title">送信に失敗しました</div>
+      <div class="complete-foot">
+        通信状態をご確認のうえ、もう一度お試しください。
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:20px;max-width:240px" onclick="location.reload()">最初に戻る</button>
+    </div>
+  `;
+  updateProgress();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function render() {
+  if (state.screen === 'intro') renderIntro();
+  else if (state.screen === 'question') renderQuestion();
+  else if (state.screen === 'booking') renderBooking();
+  else if (state.screen === 'completion') renderCompletion();
+  else if (state.screen === 'end') renderEnd();
+  else if (state.screen === 'error') renderError();
+}
+
+render();
+</script>
+</body>
+</html>
