@@ -281,7 +281,6 @@ body {
   animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-/* アニメーション削除 — ちらつき防止のため即時切り替え */
 .fade-in { }
 </style>
 </head>
@@ -309,15 +308,9 @@ body {
 </div>
 
 <script>
-// ============================================================
-// 設定 — 本番デプロイ前に下記の GAS_URL を更新してください
-// ============================================================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbybPk57whtThzppNyjdIcmQum_-JxtFyqKrtil7CbEoy3xzcsBDUw-bycbpGjLkoBl/exec';
-const LINE_OA_BASIC_ID = '@your_oa_id'; // 例: '@123abcde' (任意・完了画面のLINEに戻るリンク用)
+const LINE_OA_BASIC_ID = '@your_oa_id';
 
-// ============================================================
-// 質問データ
-// ============================================================
 const QUESTIONS_BASE = [
   {
     id: 'Q1', title: 'Q1. 髪のお悩み',
@@ -334,12 +327,12 @@ const QUESTIONS_BASE = [
     options: ['肌・肌荒れ・ニキビ', '体型・ダイエット', '睡眠・疲れ・ストレス', 'ホルモン・月経・更年期', '栄養・体調・冷え', '特になし']
   },
   {
-    id: 'Q3', title: 'Q3. 専門家への相談',
-    question: '今日のお話、もっと専門家に聞いてみたいですか？',
+    id: 'Q3', title: 'Q3. サロン提携カウンセラーへの相談',
+    question: '今日のお話、当サロン提携のカウンセラーにもう少し詳しく聞いてみたいですか？',
     note: '',
     type: 'branch',
     options: [
-      { label: 'はい、詳しく聞きたい', value: 'A', sub: '→ オンライン相談を予約します (当日/翌日)' },
+      { label: 'はい、詳しく聞きたい', value: 'A', sub: '→ 30分の無料カウンセリングを予約します (当日/翌日)' },
       { label: 'いまはまだ大丈夫', value: 'B', sub: '→ もう少し質問にお答えください' }
     ]
   }
@@ -386,26 +379,23 @@ const QUESTIONS_B = [
   },
   {
     id: 'Q7', title: 'Q7. 今後の通い方',
-    question: '今後の通い方や気になることを教えてください',
+    question: '今後の通い方を教えてください',
     note: '複数選択可',
     type: 'multi',
-    options: ['月1回ペース', '2ヶ月に1回ペース', '困った時だけ', '内側ケアにも興味あり', '特にこだわりなし']
+    options: ['月1回ペース', '2ヶ月に1回ペース', '困った時だけ', '特にこだわりなし']
   },
   {
     id: 'Q8', title: 'Q8. 最後の確認',
-    question: 'インナービューティーについて、専門家に詳しく聞いてみたいですか？',
+    question: 'インナービューティーについて、当サロン提携のカウンセラーに詳しく聞いてみたいですか？',
     note: '',
     type: 'branch',
     options: [
-      { label: 'はい、聞いてみたい', value: 'BOOK', sub: '→ オンライン相談を予約します' },
+      { label: 'はい、聞いてみたい', value: 'BOOK', sub: '→ 30分の無料カウンセリングを予約します' },
       { label: 'いまはまだ大丈夫', value: 'END', sub: '→ アンケートを終了します' }
     ]
   }
 ];
 
-// ============================================================
-// 状態管理
-// ============================================================
 function getUidFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('uid') || params.get('user_id') || '';
@@ -444,9 +434,6 @@ function updateProgress() {
   $headerStep.textContent = current + ' / ' + totalSteps;
 }
 
-// ============================================================
-// レンダリング
-// ============================================================
 function renderIntro() {
   $headerSub.textContent = 'ご来店前カウンセリング';
   $content.innerHTML = `
@@ -510,7 +497,6 @@ function renderQuestion() {
   }
   html += `</div>`;
 
-  // 戻るボタンは branch / 通常質問のどちらでも常時表示
   const arr = ans || [];
   const canProceed = q.type === 'multi_optional' || arr.length > 0;
   html += `<div class="btn-row">`;
@@ -562,7 +548,6 @@ function selectBranch(qid, value) {
       state.screen = 'booking';
       render();
     } else {
-      // BルートでENDを選んだ場合も回答は送信
       submitAnswers().then(() => {
         state.screen = 'end';
         render();
@@ -594,16 +579,13 @@ function goBackToIntro() {
 function goBackFromBooking() {
   state.screen = 'question';
   if (state.branch === 'A') {
-    state.qIndex = 2; // Q3に戻る
+    state.qIndex = 2;
   } else {
-    state.qIndex = state.questions.length - 1; // Q8に戻る
+    state.qIndex = state.questions.length - 1;
   }
   render();
 }
 
-// ============================================================
-// 予約画面
-// ============================================================
 function generateTimeSlots(isToday) {
   const slots = [];
   const startH = isToday ? 18 : 10;
@@ -632,8 +614,8 @@ function renderBooking() {
 
   let html = `<div>
     <div class="step-label">最終ステップ</div>
-    <div class="q-title">オンライン相談の日時を選択</div>
-    <div class="q-note">カウンセラーとの30分のオンライン相談です</div>
+    <div class="q-title">30分の無料カウンセリングの日時を選択</div>
+    <div class="q-note">サロン提携カウンセラーとの30分の無料カウンセリングです</div>
     <div class="required-note">★ 当日中の予約をおすすめしています</div>
     <div class="booking-tabs">
       <div class="booking-tab ${isToday ? 'active' : ''}" onclick="selectDate('today')">
@@ -675,9 +657,6 @@ async function confirmBooking() {
   }
 }
 
-// ============================================================
-// 送信処理
-// ============================================================
 async function submitAnswers() {
   $loading.classList.add('active');
   const payload = {
@@ -699,7 +678,6 @@ async function submitAnswers() {
   };
 
   try {
-    // GAS は CORS の都合で no-cors モードで送信 (レスポンス確認はできないが書き込みは成功する)
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -749,7 +727,7 @@ function renderCompletion() {
 }
 
 function renderEnd() {
-  $headerSub.textContent = 'アンケート終了';
+  $headerSub.textContent = 'ご記入ありがとうございました';
   $content.innerHTML = `
     <div class="end-screen">
       <div class="complete-icon-wrap end">🙏</div>
