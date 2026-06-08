@@ -1,0 +1,224 @@
+const SHEET_NAME_RESPONSE = '回答ログ';
+const SHEET_NAME_STEP = 'ステップログ';
+const SHEET_NAME_EXIT = '離脱ログ';
+
+const GAS_SHEET_ID = '122h-YIUBcL34ACfNKWHhA8aNY3cdwbytE9bGZpQQ8e4';
+const CALENDAR_ID = 'makinom8@gmail.com';
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const type = payload.type;
+
+    if (type === 'step_view') {
+      logStepView(payload);
+    } else if (type === 'final_submit') {
+      const result = saveAnswers(payload);
+      createCalendarEvent(payload);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, result: result })).setMimeType(ContentService.MimeType.JSON);
+    } else if (type === 'exit') {
+      logExit(payload);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    Logger.log('Error: ' + err.toString());
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function logStepView(payload) {
+  const ss = SpreadsheetApp.openById(GAS_SHEET_ID);
+  ensureSheet(ss, SHEET_NAME_STEP);
+  const sheet = ss.getSheetByName(SHEET_NAME_STEP);
+
+  sheet.appendRow([
+    payload.sessionId,
+    payload.uid,
+    payload.step,
+    payload.label,
+    payload.timestamp
+  ]);
+}
+
+function saveAnswers(payload) {
+  const ss = SpreadsheetApp.openById(GAS_SHEET_ID);
+  ensureSheet(ss, SHEET_NAME_RESPONSE);
+  const sheet = ss.getSheetByName(SHEET_NAME_RESPONSE);
+
+  // ヘッダ行を確認
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      'sessionId', 'uid', 'startedAt', 'submittedAt',
+      'gender', 'age', 'hairConcerns', 'nonHairConcerns', 'drugIntent',
+      'hairType', 'ヘアケア', '食事', '睡眠',
+      'nonHairFocus', '非髪深掘り1', '非髪深掘り2',
+      'finalBranch', 'bookingTrigger', 'bookingDateType', 'bookingOtherDate', 'bookingSlot',
+      'userAgent'
+    ]);
+  }
+
+  sheet.appendRow([
+    payload.sessionId,
+    payload.uid,
+    payload.startedAt,
+    payload.submittedAt,
+    payload.gender,
+    payload.age,
+    payload.hairConcerns,
+    payload.nonHairConcerns,
+    payload.drugIntent,
+    payload.hairType,
+    payload.hairCare,
+    payload.meal,
+    payload.sleep,
+    payload.nonHairFocus,
+    payload.nonHairDeep1,
+    payload.nonHairDeep2,
+    payload.finalBranch,
+    payload.bookingTrigger,
+    payload.bookingDateType,
+    payload.bookingOtherDate,
+    payload.bookingSlot,
+    payload.userAgent
+  ]);
+
+  return 'Saved';
+}
+
+function createCalendarEvent(payload) {
+  if (!payload.bookingSlot) return;
+
+  const calendar = CalendarApp.getCalendarById(CALENDAR_ID);
+
+  // 日時を解析
+  let eventDate = new Date();
+  if (payload.bookingDateType === 'tomorrow') {
+    eventDate.setDate(eventDate.getDate() + 1);
+  } else if (payload.bookingDateType === 'other' && payload.bookingOtherDate) {
+    eventDate = new Date(payload.bookingOtherDate);
+  }
+
+  const [hours, minutes] = payload.bookingSlot.split(':').map(Number);
+  eventDate.setHours(hours, minutes, 0, 0);
+
+  const endDate = new Date(eventDate.getTime() + 5 * 60 * 1000);
+
+  // nonHairDeep を解析
+  let deepDive1 = '';
+  let deepDive2 = '';
+  try {
+    if (payload.nonHairDeep1) {
+      const arr1 = JSON.parse(payload.nonHairDeep1);
+      deepDive1 = Array.isArray(arr1) ? arr1.join(', ') : payload.nonHairDeep1;
+    }
+    if (payload.nonHairDeep2) {
+      const arr2 = JSON.parse(payload.nonHairDeep2);
+      deepDive2 = Array.isArray(arr2) ? arr2.join(', ') : payload.nonHairDeep2;
+    }
+  } catch (e) {
+    deepDive1 = payload.nonHairDeep1 || '';
+    deepDive2 = payload.nonHairDeep2 || '';
+  }
+
+  // 説明文を構築
+  let desc = '';
+  desc += '【顧客情報】\n';
+  desc += '名前: ' + (payload.uid || 'N/A') + '\n';
+  desc += 'sessionId: ' + payload.sessionId + '\n\n';
+
+  desc += '【基本情報】\n';
+  desc += '性別: ' + (payload.gender || 'N/A') + '\n';
+  desc += '年代: ' + (payload.age || 'N/A') + '\n\n';
+
+  desc += '【髪のお悩み】\n';
+  desc += payload.hairConcerns || 'N/A';
+  desc += '\n\n';
+
+  desc += '【髪以外のお悩み】\n';
+  desc += payload.nonHairConcerns || 'N/A';
+  if (payload.nonHairFocus) {
+    desc += '\n最重要: ' + payload.nonHairFocus;
+    if (deepDive1) desc += '\n深掘り①: ' + deepDive1;
+    if (deepDive2) desc += '\n深掘り②: ' + deepDive2;
+  }
+  desc += '\n\n';
+
+  desc += '【お薬への意向】\n';
+  desc += payload.drugIntent || 'N/A';
+  desc += '\n\n';
+
+  desc += '【ライフスタイル】\n';
+  desc += 'ヘアケア: ' + (payload.hairCare || 'N/A') + '\n';
+  desc += '食事: ' + (payload.meal || 'N/A') + '\n';
+  desc += '睡眠: ' + (payload.sleep || 'N/A') + '\n\n';
+
+  desc += '【カウンセリング意向】\n';
+  desc += payload.finalBranch === 'yes' ? 'はい、聞いてみたい' : '今はまだ大丈夫';
+
+  try {
+    calendar.createEvent(
+      '[予約] ' + payload.uid,
+      eventDate,
+      endDate,
+      { description: desc }
+    );
+  } catch (e) {
+    Logger.log('Calendar error: ' + e.toString());
+  }
+}
+
+function logExit(payload) {
+  const ss = SpreadsheetApp.openById(GAS_SHEET_ID);
+  ensureSheet(ss, SHEET_NAME_EXIT);
+  const sheet = ss.getSheetByName(SHEET_NAME_EXIT);
+
+  sheet.appendRow([
+    payload.sessionId,
+    payload.uid,
+    payload.step,
+    payload.timestamp
+  ]);
+}
+
+function ensureSheet(ss, sheetName) {
+  if (!ss.getSheetByName(sheetName)) {
+    ss.insertSheet(sheetName);
+  }
+}
+
+// テスト関数
+function testInsert() {
+  const testPayload = {
+    type: 'final_submit',
+    sessionId: 'sid_test_' + Date.now(),
+    uid: 'test_user',
+    startedAt: new Date().toISOString(),
+    submittedAt: new Date().toISOString(),
+    gender: '女性',
+    age: '30代',
+    hairConcerns: 'パサつき・乾燥|うねり・くせ',
+    nonHairConcerns: '肌・肌荒れ・ニキビ|睡眠・疲れ・ストレス',
+    drugIntent: 'positive',
+    hairType: '細い|量が少ない|カラーをしている',
+    hairCare: 'サロンのシャンプー|トリートメントを月1回以上',
+    meal: 'タンパク質が不足しがち|鉄分が足りていない',
+    sleep: '睡眠時間が6時間未満|寝つきが悪い',
+    nonHairFocus: '肌・肌荒れ・ニキビ',
+    nonHairDeep1: JSON.stringify(['ニキビ・吹き出物', '乾燥']),
+    nonHairDeep2: JSON.stringify(['Tゾーン', 'Uゾーン(あご周り)']),
+    finalBranch: 'yes',
+    bookingTrigger: 'final_branch',
+    bookingDateType: 'today',
+    bookingOtherDate: '',
+    bookingSlot: '14:00',
+    userAgent: 'Test'
+  };
+
+  const result = saveAnswers(testPayload);
+  Logger.log('testInsert result: ' + result);
+
+  // シートが3つ作成されたか確認
+  const ss = SpreadsheetApp.openById(GAS_SHEET_ID);
+  Logger.log('Sheets: ' + ss.getSheets().map(s => s.getName()).join(', '));
+}
