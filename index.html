@@ -486,13 +486,28 @@ const Q_DRUG_OPTIONS = [
   { value: 'no', label: '今はまだ大丈夫' }
 ];
 
-// 髪以外悩み 深掘り1問(各カテゴリの最重要1問)
+// 髪以外悩み 深掘り2問(各カテゴリ)
 const NON_HAIR_DEEP_DIVE = {
-  '肌・肌荒れ・ニキビ': { q: '気になる症状は?', options: ['ニキビ・吹き出物', '乾燥', 'くすみ・シミ', 'たるみ'] },
-  '体型・ダイエット': { q: '気になるパーツは?', options: ['お腹周り', '下半身', '二の腕', '全体的に'] },
-  '睡眠・疲れ・ストレス': { q: '気になる症状は?', options: ['寝つきが悪い', '眠りが浅い', '朝起きられない', '疲れがとれない'] },
-  'ホルモン・月経・更年期': { q: '気になる症状は?', options: ['PMS(月経前症候群)', '月経痛', '月経不順', '更年期症状'] },
-  '栄養・体調・冷え': { q: '気になる症状は?', options: ['冷え', '疲れやすい', '貧血気味', '便秘・むくみ'] }
+  '肌・肌荒れ・ニキビ': [
+    { q: '気になる症状は?', options: ['ニキビ・吹き出物', '乾燥', 'くすみ・シミ', 'たるみ'] },
+    { q: '気になる部位は?', options: ['顔全体', 'Tゾーン', 'Uゾーン(あご周り)', 'フェイスライン'] }
+  ],
+  '体型・ダイエット': [
+    { q: '気になるパーツは?', options: ['お腹周り', '下半身', '二の腕', '全体的に'] },
+    { q: 'これまで試したことは?', options: ['食事制限', '運動', 'サプリ', '何もしていない'] }
+  ],
+  '睡眠・疲れ・ストレス': [
+    { q: '気になる症状は?', options: ['寝つきが悪い', '眠りが浅い', '朝起きられない', '疲れがとれない'] },
+    { q: '気になる期間は?', options: ['最近(数週間)', '数ヶ月', '数年', '常に'] }
+  ],
+  'ホルモン・月経・更年期': [
+    { q: '気になる症状は?', options: ['PMS(月経前症候群)', '月経痛', '月経不順', '更年期症状'] },
+    { q: '日常への影響度は?', options: ['日常に支障あり', '時々困る', '気になる程度', '我慢している'] }
+  ],
+  '栄養・体調・冷え': [
+    { q: '気になる症状は?', options: ['冷え', '疲れやすい', '貧血気味', '便秘・むくみ'] },
+    { q: '気になる期間は?', options: ['最近(数週間)', '数ヶ月', '年単位', '体質だと思っている'] }
+  ]
 };
 
 // ====================================================================
@@ -528,7 +543,7 @@ let state = {
     meal: [],               // 食事 複数
     sleep: [],              // 睡眠 複数
     nonHairFocus: null,     // 髪以外で一番気になる 単一
-    nonHairDeep: null,      // 深掘り1問
+    nonHairDeep: [],        // 深掘り2問の答え [a1, a2]
     finalBranch: null       // 最終分岐
   },
   bookingDateType: 'today',
@@ -1009,7 +1024,7 @@ function renderNonHairFocus() {
 
 function selectNonHairFocus(opt) {
   state.answers.nonHairFocus = opt;
-  state.answers.nonHairDeep = null;
+  state.answers.nonHairDeep = [];
   renderNonHairFocus();
 }
 
@@ -1020,35 +1035,50 @@ function goToNonHairDeep() { state.screen = 'non_hair_deep'; render(); }
 // ====================================================================
 function renderNonHairDeep() {
   const focus = state.answers.nonHairFocus;
-  const q = NON_HAIR_DEEP_DIVE[focus];
-  if (!q) {
+  const questions = NON_HAIR_DEEP_DIVE[focus];
+  if (!questions || questions.length === 0) {
     state.screen = 'final_branch';
     render();
     return;
   }
   $headerSub.textContent = `${focus} について`;
   logStepView('non_hair_deep', '髪以外深掘り');
+  const answers = state.answers.nonHairDeep || [];
   let html = `<div>
     <div class="step-label">${escapeHtml(focus)} について</div>
-    <div class="q-title">${escapeHtml(q.q)}</div>
-    <div class="options">`;
-  q.options.forEach(opt => {
-    const sel = state.answers.nonHairDeep === opt ? 'selected' : '';
-    html += `<div class="option ${sel}" onclick="selectNonHairDeep('${escapeAttr(opt)}')">
-      <div class="radio"></div>
-      <div class="option-text">${escapeHtml(opt)}</div>
-    </div>`;
+    <div class="q-title">もう少し詳しく教えてください</div>
+    <div class="q-note">2つの質問にお答えください</div>`;
+
+  questions.forEach((q, qIdx) => {
+    html += `<div class="field-group" style="margin-top: 18px;">
+      <div class="field-label">質問 ${qIdx + 1}: ${escapeHtml(q.q)}</div>
+      <div class="options">`;
+    q.options.forEach(opt => {
+      const sel = answers[qIdx] === opt ? 'selected' : '';
+      html += `<div class="option ${sel}" onclick="selectNonHairDeepOption(${qIdx}, '${escapeAttr(opt)}')">
+        <div class="radio"></div>
+        <div class="option-text">${escapeHtml(opt)}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
   });
-  html += `</div>`;
+
+  const canProceed = (answers[0] || answers[0] === '') && answers[0] && answers[1];
   html += `<div class="btn-row">
     <button class="btn btn-secondary" onclick="goBackFromNonHairDeep()">戻る</button>
+    <button class="btn btn-primary" onclick="goToFinalBranchFromDeep()" ${canProceed ? '' : 'disabled'}>次へ</button>
   </div></div>`;
   $content.innerHTML = html;
   updateProgress();
 }
 
-function selectNonHairDeep(opt) {
-  state.answers.nonHairDeep = opt;
+function selectNonHairDeepOption(qIdx, opt) {
+  if (!Array.isArray(state.answers.nonHairDeep)) state.answers.nonHairDeep = [];
+  state.answers.nonHairDeep[qIdx] = opt;
+  renderNonHairDeep();
+}
+
+function goToFinalBranchFromDeep() {
   state.screen = 'final_branch';
   render();
 }
@@ -1288,7 +1318,8 @@ async function submitAnswers() {
     meal: (state.answers.meal || []).join('|'),
     sleep: (state.answers.sleep || []).join('|'),
     nonHairFocus: state.answers.nonHairFocus || '',
-    nonHairDeep: state.answers.nonHairDeep || '',
+    nonHairDeep1: (state.answers.nonHairDeep && state.answers.nonHairDeep[0]) || '',
+    nonHairDeep2: (state.answers.nonHairDeep && state.answers.nonHairDeep[1]) || '',
     finalBranch: state.answers.finalBranch || '',
     bookingTrigger: state.bookingTrigger || '',
     bookingDateType: state.bookingDateType || '',
