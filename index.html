@@ -450,6 +450,35 @@ const HAIR_TYPE_OPTIONS = [
   '白髪あり'
 ];
 
+// ヘアケア(複数選択)
+const HAIR_CARE_OPTIONS = [
+  '市販のシャンプー',
+  'サロンのシャンプー',
+  'トリートメントを月1回以上',
+  'ヘアパック・オイル',
+  '特にケアしていない'
+];
+
+// 食事(複数選択)
+const MEAL_OPTIONS = [
+  'タンパク質(肉・魚・卵・豆)が不足しがち',
+  '鉄分・ミネラルが足りていない気がする',
+  '野菜・ビタミンが足りない',
+  '外食・コンビニ食が多い',
+  '髪に良い食事を意識している',
+  '特に気にしていない'
+];
+
+// 睡眠(複数選択)
+const SLEEP_OPTIONS = [
+  '睡眠時間が6時間未満の日が多い',
+  '寝つきが悪い・眠りが浅い',
+  '夜更かしが多い',
+  '夜中に目が覚める',
+  'よく眠れている',
+  '改善したいけど難しい'
+];
+
 const Q_DRUG_OPTIONS = [
   { value: 'positive', label: '積極的に検討したい' },
   { value: 'coupon', label: 'お得なクーポンやキャンペーンがあるなら、試してみたい' },
@@ -495,6 +524,9 @@ let state = {
     nonHairConcerns: [],    // 髪以外悩み 複数
     drugIntent: null,       // お薬意向 単一
     hairType: [],           // 髪質 複数
+    hairCare: [],           // ヘアケア 複数
+    meal: [],               // 食事 複数
+    sleep: [],              // 睡眠 複数
     nonHairFocus: null,     // 髪以外で一番気になる 単一
     nonHairDeep: null,      // 深掘り1問
     finalBranch: null       // 最終分岐
@@ -538,11 +570,11 @@ function logStepView(stepId, stepLabel) {
 // プログレス計算
 // ====================================================================
 function getStepProgress() {
-  // 概算: フローを8ステップとして計算
-  const order = ['intro','profile','hair','non_hair','drug','hair_type','non_hair_focus','non_hair_deep','final_branch','booking'];
+  // 概算: フローを11ステップとして計算
+  const order = ['intro','profile','hair','non_hair','drug','hair_type','hair_care','meal','sleep','non_hair_focus','non_hair_deep','final_branch','booking'];
   const idx = order.indexOf(state.screen);
-  if (idx < 0) return { current: 0, total: 8 };
-  return { current: Math.max(1, idx), total: 8 };
+  if (idx < 0) return { current: 0, total: 11 };
+  return { current: Math.max(1, idx), total: 11 };
 }
 
 function updateProgress() {
@@ -796,11 +828,13 @@ function renderHairType() {
   const canProceed = selected.length > 0;
   html += `<div class="btn-row">
     <button class="btn btn-secondary" onclick="goBack('drug')">戻る</button>
-    <button class="btn btn-primary" onclick="goToNonHairFocus()" ${canProceed ? '' : 'disabled'}>次へ</button>
+    <button class="btn btn-primary" onclick="goToHairCare()" ${canProceed ? '' : 'disabled'}>次へ</button>
   </div></div>`;
   $content.innerHTML = html;
   updateProgress();
 }
+
+function goToHairCare() { state.screen = 'hair_care'; render(); }
 
 function toggleHairType(opt) {
   const arr = state.answers.hairType || [];
@@ -809,6 +843,126 @@ function toggleHairType(opt) {
   else arr.push(opt);
   state.answers.hairType = arr;
   renderHairType();
+}
+
+// ====================================================================
+// Step6: ヘアケア(複数選択)
+// ====================================================================
+function renderHairCare() {
+  $headerSub.textContent = '普段のヘアケア';
+  logStepView('hair_care', 'ヘアケア');
+  const selected = state.answers.hairCare || [];
+  let html = `<div>
+    <div class="step-label">普段のヘアケアについて</div>
+    <div class="q-title">普段のヘアケアの傾向を教えてください</div>
+    <div class="q-note">複数選択可</div>
+    <div class="options">`;
+  HAIR_CARE_OPTIONS.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleHairCare('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('hair_type')">戻る</button>
+    <button class="btn btn-primary" onclick="goToMeal()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function toggleHairCare(opt) {
+  const arr = state.answers.hairCare || [];
+  const i = arr.indexOf(opt);
+  if (i >= 0) arr.splice(i, 1);
+  else arr.push(opt);
+  state.answers.hairCare = arr;
+  renderHairCare();
+}
+
+function goToMeal() { state.screen = 'meal'; render(); }
+
+// ====================================================================
+// Step7: 食事(複数選択)
+// ====================================================================
+function renderMeal() {
+  $headerSub.textContent = '食事について';
+  logStepView('meal', '食事');
+  const selected = state.answers.meal || [];
+  let html = `<div>
+    <div class="step-label">食事について</div>
+    <div class="q-title">髪の材料となる栄養素、不足している実感はありますか？</div>
+    <div class="q-note">複数選択可</div>
+    <div class="q-context">💡 髪はタンパク質・鉄・ビタミンから作られます</div>
+    <div class="options">`;
+  MEAL_OPTIONS.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleMeal('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('hair_care')">戻る</button>
+    <button class="btn btn-primary" onclick="goToSleep()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function toggleMeal(opt) {
+  const arr = state.answers.meal || [];
+  const i = arr.indexOf(opt);
+  if (i >= 0) arr.splice(i, 1);
+  else arr.push(opt);
+  state.answers.meal = arr;
+  renderMeal();
+}
+
+function goToSleep() { state.screen = 'sleep'; render(); }
+
+// ====================================================================
+// Step8: 睡眠(複数選択)
+// ====================================================================
+function renderSleep() {
+  $headerSub.textContent = '睡眠について';
+  logStepView('sleep', '睡眠');
+  const selected = state.answers.sleep || [];
+  let html = `<div>
+    <div class="step-label">睡眠について</div>
+    <div class="q-title">髪は睡眠中に育ちます。睡眠の状態はいかがですか？</div>
+    <div class="q-note">複数選択可</div>
+    <div class="q-context">💡 成長ホルモンが分泌される深い睡眠が、髪の成長に直結します</div>
+    <div class="options">`;
+  SLEEP_OPTIONS.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleSleep('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('meal')">戻る</button>
+    <button class="btn btn-primary" onclick="goToNonHairFocus()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function toggleSleep(opt) {
+  const arr = state.answers.sleep || [];
+  const i = arr.indexOf(opt);
+  if (i >= 0) arr.splice(i, 1);
+  else arr.push(opt);
+  state.answers.sleep = arr;
+  renderSleep();
 }
 
 function goToNonHairFocus() {
@@ -846,7 +1000,7 @@ function renderNonHairFocus() {
   });
   html += `</div>`;
   html += `<div class="btn-row">
-    <button class="btn btn-secondary" onclick="goBack('hair_type')">戻る</button>
+    <button class="btn btn-secondary" onclick="goBack('sleep')">戻る</button>
     <button class="btn btn-primary" onclick="goToNonHairDeep()" ${state.answers.nonHairFocus ? '' : 'disabled'}>次へ</button>
   </div></div>`;
   $content.innerHTML = html;
@@ -904,7 +1058,7 @@ function goBackFromNonHairDeep() {
   if (concerns.length > 1) {
     state.screen = 'non_hair_focus';
   } else {
-    state.screen = 'hair_type';
+    state.screen = 'sleep';
   }
   render();
 }
@@ -963,7 +1117,7 @@ function goBackFromFinalBranch() {
   if (concerns.length > 0) {
     state.screen = 'non_hair_deep';
   } else {
-    state.screen = 'hair_type';
+    state.screen = 'sleep';
   }
   render();
 }
@@ -1130,6 +1284,9 @@ async function submitAnswers() {
     nonHairConcerns: (state.answers.nonHairConcerns || []).join('|'),
     drugIntent: state.answers.drugIntent || '',
     hairType: (state.answers.hairType || []).join('|'),
+    hairCare: (state.answers.hairCare || []).join('|'),
+    meal: (state.answers.meal || []).join('|'),
+    sleep: (state.answers.sleep || []).join('|'),
     nonHairFocus: state.answers.nonHairFocus || '',
     nonHairDeep: state.answers.nonHairDeep || '',
     finalBranch: state.answers.finalBranch || '',
@@ -1307,6 +1464,9 @@ function render() {
   else if (state.screen === 'non_hair') renderNonHair();
   else if (state.screen === 'drug') renderDrug();
   else if (state.screen === 'hair_type') renderHairType();
+  else if (state.screen === 'hair_care') renderHairCare();
+  else if (state.screen === 'meal') renderMeal();
+  else if (state.screen === 'sleep') renderSleep();
   else if (state.screen === 'non_hair_focus') renderNonHairFocus();
   else if (state.screen === 'non_hair_deep') renderNonHairDeep();
   else if (state.screen === 'final_branch') renderFinalBranch();
