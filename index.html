@@ -20,6 +20,9 @@
   --warn-bg: #FFF3DD;
   --warn-border: #E8B463;
   --warn-text: #8B5A00;
+  --coupon-bg: #FFF8E7;
+  --coupon-border: #F4C857;
+  --coupon-text: #B47100;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
@@ -77,15 +80,6 @@ body {
 }
 .q-title { font-size: 18px; font-weight: 700; line-height: 1.45; margin-bottom: 8px; }
 .q-note { font-size: 12px; color: var(--mute); margin-bottom: 18px; }
-.q-context {
-  font-size: 12px;
-  color: var(--accent);
-  background: var(--line-green-light);
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
 .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 .option {
   border: 1.5px solid var(--border);
@@ -140,6 +134,14 @@ body {
 }
 .option-text { flex: 1; line-height: 1.4; }
 .option-sub { display: block; font-size: 11px; color: var(--mute); margin-top: 3px; font-weight: 400; }
+.field-group { margin-bottom: 22px; }
+.field-label {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: block;
+}
 .btn-row { display: flex; gap: 8px; margin-top: 18px; }
 .btn {
   flex: 1;
@@ -183,19 +185,35 @@ body {
 .booking-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
 .booking-tab {
   flex: 1;
-  padding: 12px;
+  padding: 12px 4px;
   border: 1.5px solid var(--border);
   background: white;
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   transition: all 0.15s;
 }
 .booking-tab.active { border-color: var(--line-green); background: var(--line-green-light); color: var(--accent); }
-.booking-tab-day { display: block; font-size: 11px; color: var(--mute); font-weight: 500; margin-top: 2px; }
+.booking-tab-day { display: block; font-size: 10px; color: var(--mute); font-weight: 500; margin-top: 2px; }
 .booking-tab.active .booking-tab-day { color: var(--accent); }
+.date-picker-wrap {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+}
+.date-picker-label { font-size: 12px; color: var(--mute); margin-bottom: 6px; font-weight: 600; }
+.date-picker {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+}
 .time-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -240,6 +258,7 @@ body {
 .complete-icon-wrap.success { background: var(--line-green-light); color: var(--line-green); }
 .complete-icon-wrap.end { background: #F0F2F4; color: var(--mute); }
 .complete-icon-wrap.error { background: #FCE6E1; color: #C9583F; }
+.complete-icon-wrap.coupon { background: var(--coupon-bg); color: var(--coupon-text); }
 .complete-title { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
 .complete-detail {
   background: var(--line-green-light);
@@ -263,6 +282,73 @@ body {
   font-weight: 700;
   font-size: 14px;
 }
+.coupon-card {
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFE9B0 100%);
+  border: 2px dashed var(--coupon-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 18px 0;
+  text-align: center;
+}
+.coupon-label {
+  font-size: 12px;
+  color: var(--coupon-text);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+.coupon-amount {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--coupon-text);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.coupon-amount small { font-size: 16px; }
+.coupon-name { font-size: 13px; color: var(--coupon-text); font-weight: 600; }
+.action-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+.action-card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.action-card:active { transform: scale(0.99); }
+.action-card:hover { border-color: var(--line-green); }
+.action-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--line-green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.action-text { flex: 1; }
+.action-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.action-desc { font-size: 11.5px; color: var(--mute); line-height: 1.4; }
+.bookmark-note {
+  background: var(--line-green-light);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--accent);
+  line-height: 1.6;
+  text-align: left;
+}
 .loading-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -281,7 +367,6 @@ body {
   animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.fade-in { }
 </style>
 </head>
 <body>
@@ -308,109 +393,116 @@ body {
 </div>
 
 <script>
+// ====================================================================
+// 設定
+// ====================================================================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbybPk57whtThzppNyjdIcmQum_-JxtFyqKrtil7CbEoy3xzcsBDUw-bycbpGjLkoBl/exec';
 const LINE_OA_BASIC_ID = '@your_oa_id';
+const COUPON_AMOUNT = '¥1,000 OFF';
+const COUPON_NAME = 'カウンセリング特典クーポン';
 
-const QUESTIONS_BASE = [
-  {
-    id: 'Q1', title: 'Q1. 髪のお悩み',
-    question: '気になる髪のお悩みを教えてください',
-    note: '複数選択可',
-    type: 'multi',
-    options: ['ハリ・コシがない', 'パサつき・乾燥', 'ボリュームダウン', 'うねり・くせ', 'カラーダメージ', '白髪', '抜け毛・薄毛', 'その他', '特になし']
-  },
-  {
-    id: 'Q2', title: 'Q2. 髪以外で気になっていること',
-    question: '髪以外で最近気になっていることはありますか？',
-    note: '複数選択可・任意',
-    type: 'multi_optional',
-    options: ['肌・肌荒れ・ニキビ', '体型・ダイエット', '睡眠・疲れ・ストレス', 'ホルモン・月経・更年期', '栄養・体調・冷え', '特になし']
-  },
-  {
-    id: 'Q3', title: 'Q3. サロン提携カウンセラーへの相談',
-    question: '今日のお話、当サロン提携のカウンセラーにもう少し詳しく聞いてみたいですか？',
-    note: '',
-    type: 'branch',
-    options: [
-      { label: 'はい、詳しく聞きたい', value: 'A', sub: '→ 30分の無料カウンセリングを予約します (当日/翌日)' },
-      { label: 'いまはまだ大丈夫', value: 'B', sub: '→ もう少し質問にお答えください' }
-    ]
-  }
+// ====================================================================
+// 選択肢定義
+// ====================================================================
+const GENDER_OPTIONS = ['女性', '男性'];
+const AGE_OPTIONS = ['10代以下', '20代', '30代', '40代', '50代', '60代以上'];
+
+const HAIR_OPTIONS = [
+  'ハリ・コシがない',
+  'パサつき・乾燥',
+  'ボリュームダウン',
+  'うねり・くせ',
+  'カラーダメージ',
+  '白髪',
+  '抜け毛・薄毛',
+  'その他',
+  '特になし'
 ];
 
-const QUESTIONS_B = [
-  {
-    id: 'Q4', title: 'Q4. ヘアケアについて',
-    question: '普段のヘアケアの傾向を教えてください',
-    note: '複数選択可',
-    context: '髪質改善のヒントを見つけるための質問です',
-    type: 'multi',
-    options: ['市販のシャンプー', 'サロンのシャンプー', 'トリートメント月1回以上', 'ヘアパック・オイル', '特にケアしていない']
-  },
-  {
-    id: 'Q5', title: 'Q5. 食事について',
-    question: '髪の材料となる栄養素、不足している実感はありますか？',
-    note: '複数選択可',
-    context: '髪はタンパク質・鉄・ビタミンから作られます',
-    type: 'multi',
-    options: [
-      'タンパク質(肉・魚・卵・豆)が不足しがち',
-      '鉄分・ミネラルが足りていない気がする',
-      '野菜・ビタミンが足りない',
-      '外食・コンビニ食が多い',
-      '髪に良い食事を意識している',
-      '特に気にしていない'
-    ]
-  },
-  {
-    id: 'Q6', title: 'Q6. 睡眠について',
-    question: '髪は睡眠中に育ちます。睡眠の状態はいかがですか？',
-    note: '複数選択可',
-    context: '成長ホルモンが分泌される深い睡眠が、髪の成長に直結します',
-    type: 'multi',
-    options: [
-      '睡眠時間が6時間未満の日が多い',
-      '寝つきが悪い・眠りが浅い',
-      '夜更かしが多い',
-      '夜中に目が覚める',
-      'よく眠れている',
-      '改善したいけど難しい'
-    ]
-  },
-  {
-    id: 'Q7', title: 'Q7. 今後の通い方',
-    question: '今後の通い方を教えてください',
-    note: '複数選択可',
-    type: 'multi',
-    options: ['月1回ペース', '2ヶ月に1回ペース', '困った時だけ', '特にこだわりなし']
-  },
-  {
-    id: 'Q8', title: 'Q8. 最後の確認',
-    question: 'インナービューティーについて、当サロン提携のカウンセラーに詳しく聞いてみたいですか？',
-    note: '',
-    type: 'branch',
-    options: [
-      { label: 'はい、聞いてみたい', value: 'BOOK', sub: '→ 30分の無料カウンセリングを予約します' },
-      { label: 'いまはまだ大丈夫', value: 'END', sub: '→ アンケートを終了します' }
-    ]
-  }
+const NON_HAIR_OPTIONS_FEMALE = [
+  '肌・肌荒れ・ニキビ',
+  '体型・ダイエット',
+  '睡眠・疲れ・ストレス',
+  'ホルモン・月経・更年期',
+  '栄養・体調・冷え',
+  '特になし'
 ];
 
+const NON_HAIR_OPTIONS_MALE = [
+  '肌・肌荒れ・ニキビ',
+  '体型・ダイエット',
+  '睡眠・疲れ・ストレス',
+  '栄養・体調・冷え',
+  '特になし'
+];
+
+// 髪質(複数選択・共通)
+const HAIR_TYPE_OPTIONS = [
+  '直毛',
+  '軽くウェーブ・くせ毛',
+  '強いくせ毛',
+  '細い',
+  '太い',
+  '量が多い',
+  '量が少ない',
+  'カラーをしている',
+  'パーマをしている',
+  '白髪あり'
+];
+
+const Q_DRUG_OPTIONS = [
+  { value: 'positive', label: '積極的に検討したい' },
+  { value: 'coupon', label: 'お得なクーポンやキャンペーンがあるなら、試してみたい' },
+  { value: 'cheaper', label: '今使っているお薬より安くなるなら試してみたい' },
+  { value: 'no', label: '今はまだ大丈夫' }
+];
+
+// 髪以外悩み 深掘り1問(各カテゴリの最重要1問)
+const NON_HAIR_DEEP_DIVE = {
+  '肌・肌荒れ・ニキビ': { q: '気になる症状は?', options: ['ニキビ・吹き出物', '乾燥', 'くすみ・シミ', 'たるみ'] },
+  '体型・ダイエット': { q: '気になるパーツは?', options: ['お腹周り', '下半身', '二の腕', '全体的に'] },
+  '睡眠・疲れ・ストレス': { q: '気になる症状は?', options: ['寝つきが悪い', '眠りが浅い', '朝起きられない', '疲れがとれない'] },
+  'ホルモン・月経・更年期': { q: '気になる症状は?', options: ['PMS(月経前症候群)', '月経痛', '月経不順', '更年期症状'] },
+  '栄養・体調・冷え': { q: '気になる症状は?', options: ['冷え', '疲れやすい', '貧血気味', '便秘・むくみ'] }
+};
+
+// ====================================================================
+// state
+// ====================================================================
 function getUidFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('uid') || params.get('user_id') || '';
 }
 
+function getSessionId() {
+  let sid = sessionStorage.getItem('shareclinic_sid');
+  if (!sid) {
+    sid = 'sid_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem('shareclinic_sid', sid);
+  }
+  return sid;
+}
+
 let state = {
   screen: 'intro',
-  qIndex: 0,
-  questions: QUESTIONS_BASE.slice(),
-  branch: null,
-  answers: {},
-  bookingDate: 'today',
-  bookingSlot: null,
   uid: getUidFromUrl(),
-  startedAt: new Date().toISOString()
+  sessionId: getSessionId(),
+  startedAt: new Date().toISOString(),
+  answers: {
+    gender: null,           // 性別 単一
+    age: null,              // 年代 単一
+    hairConcerns: [],       // 髪悩み 複数
+    nonHairConcerns: [],    // 髪以外悩み 複数
+    drugIntent: null,       // お薬意向 単一
+    hairType: [],           // 髪質 複数
+    nonHairFocus: null,     // 髪以外で一番気になる 単一
+    nonHairDeep: null,      // 深掘り1問
+    finalBranch: null       // 最終分岐
+  },
+  bookingDateType: 'today',
+  bookingOtherDate: '',
+  bookingSlot: null,
+  bookingTrigger: null
 };
 
 const $content = document.getElementById('content');
@@ -420,22 +512,61 @@ const $headerSub = document.getElementById('header-sub');
 const $headerStep = document.getElementById('header-step');
 const $loading = document.getElementById('loading-overlay');
 
+// ====================================================================
+// 離脱計測 — 各画面表示時にGASに ping
+// ====================================================================
+function logStepView(stepId, stepLabel) {
+  const payload = {
+    type: 'step_view',
+    sessionId: state.sessionId,
+    uid: state.uid,
+    step: stepId,
+    label: stepLabel,
+    timestamp: new Date().toISOString()
+  };
+  try {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch (e) {}
+}
+
+// ====================================================================
+// プログレス計算
+// ====================================================================
+function getStepProgress() {
+  // 概算: フローを8ステップとして計算
+  const order = ['intro','profile','hair','non_hair','drug','hair_type','non_hair_focus','non_hair_deep','final_branch','booking'];
+  const idx = order.indexOf(state.screen);
+  if (idx < 0) return { current: 0, total: 8 };
+  return { current: Math.max(1, idx), total: 8 };
+}
+
 function updateProgress() {
-  if (['intro','completion','end','error'].includes(state.screen)) {
+  if (['intro','completion','end','error','coupon_end'].includes(state.screen)) {
     $progressWrap.style.display = 'none';
     $headerStep.textContent = '';
     return;
   }
   $progressWrap.style.display = 'block';
-  const totalSteps = state.branch === 'B' ? 9 : 4;
-  let current = state.qIndex + 1;
-  if (state.screen === 'booking') current = totalSteps;
-  $progressBar.style.width = ((current / totalSteps) * 100) + '%';
-  $headerStep.textContent = current + ' / ' + totalSteps;
+  const p = getStepProgress();
+  $progressBar.style.width = Math.min(100, (p.current / p.total) * 100) + '%';
+  $headerStep.textContent = '';
 }
 
+function getNonHairOptions() {
+  return state.answers.gender === '男性' ? NON_HAIR_OPTIONS_MALE : NON_HAIR_OPTIONS_FEMALE;
+}
+
+// ====================================================================
+// 画面: intro
+// ====================================================================
 function renderIntro() {
   $headerSub.textContent = 'ご来店前カウンセリング';
+  logStepView('intro', 'イントロ');
   $content.innerHTML = `
     <div class="intro-screen">
       <div class="intro-icon-wrap">📋</div>
@@ -444,151 +575,405 @@ function renderIntro() {
         本日のカウンセリングを<br>
         スムーズに進めるため、<br>
         簡単なご記入にご協力ください。<br><br>
-        所要時間：約3分
+        所要時間：約2分
       </div>
-      <button class="btn btn-primary btn-full" onclick="startSurvey()">記入を始める</button>
+      <button class="btn btn-primary btn-full" onclick="goToProfile()">記入を始める</button>
     </div>
   `;
   updateProgress();
 }
 
-function startSurvey() {
-  state.screen = 'question';
-  state.qIndex = 0;
-  render();
-}
+function goToProfile() { state.screen = 'profile'; render(); }
 
-function renderQuestion() {
-  const q = state.questions[state.qIndex];
-  if (!q) return;
-  $headerSub.textContent = q.title;
-
-  const ans = state.answers[q.id];
-  const isMulti = q.type === 'multi' || q.type === 'multi_optional';
-  const isBranch = q.type === 'branch';
-
+// ====================================================================
+// Step1: 性別 + 年代
+// ====================================================================
+function renderProfile() {
+  $headerSub.textContent = 'あなたについて';
+  logStepView('profile', '性別年代');
   let html = `<div>
-    <div class="step-label">${q.title}</div>
-    <div class="q-title">${escapeHtml(q.question)}</div>
-    ${q.note ? `<div class="q-note">${escapeHtml(q.note)}</div>` : ''}
-    ${q.context ? `<div class="q-context">💡 ${escapeHtml(q.context)}</div>` : ''}
-    <div class="options">`;
+    <div class="step-label">あなたについて</div>
+    <div class="q-title">かんたんなプロフィールをお聞かせください</div>
+    <div class="q-note">アンケート内容を最適化するため使用します</div>
 
-  if (isBranch) {
-    q.options.forEach((opt) => {
-      const sel = ans === opt.value ? 'selected' : '';
-      html += `<div class="option branch ${sel}" onclick="selectBranch('${q.id}', '${opt.value}')">
-        <div class="radio"></div>
-        <div class="option-text">
-          <div>${escapeHtml(opt.label)}</div>
-          <span class="option-sub">${escapeHtml(opt.sub)}</span>
-        </div>
-      </div>`;
-    });
-  } else {
-    q.options.forEach((opt, i) => {
-      const arr = ans || [];
-      const sel = arr.includes(opt) ? 'selected' : '';
-      html += `<div class="option ${sel}" onclick="selectOption('${q.id}', ${i}, '${q.type}')">
-        <div class="checkbox">✓</div>
-        <div class="option-text">${escapeHtml(opt)}</div>
-      </div>`;
-    });
-  }
-  html += `</div>`;
+    <div class="field-group">
+      <div class="field-label">性別</div>
+      <div class="options">`;
+  GENDER_OPTIONS.forEach(opt => {
+    const sel = state.answers.gender === opt ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="selectGender('${escapeAttr(opt)}')">
+      <div class="radio"></div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div></div>
 
-  const arr = ans || [];
-  const canProceed = q.type === 'multi_optional' || arr.length > 0;
-  html += `<div class="btn-row">`;
-  if (state.qIndex > 0) {
-    html += `<button class="btn btn-secondary" onclick="prevQuestion()">戻る</button>`;
-  } else {
-    html += `<button class="btn btn-secondary" onclick="goBackToIntro()">戻る</button>`;
-  }
-  if (!isBranch) {
-    html += `<button class="btn btn-primary" onclick="nextQuestion()" ${canProceed ? '' : 'disabled'}>次へ</button>`;
-  }
-  html += `</div>`;
+    <div class="field-group">
+      <div class="field-label">年代</div>
+      <div class="options">`;
+  AGE_OPTIONS.forEach(opt => {
+    const sel = state.answers.age === opt ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="selectAge('${escapeAttr(opt)}')">
+      <div class="radio"></div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div></div>`;
 
-  html += `</div>`;
+  const canProceed = state.answers.gender && state.answers.age;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBackToIntro()">戻る</button>
+    <button class="btn btn-primary" onclick="goToHair()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
   $content.innerHTML = html;
   updateProgress();
 }
 
-function selectOption(qid, idx, type) {
-  const q = state.questions.find(x => x.id === qid);
-  const opt = q.options[idx];
-  if (!state.answers[qid]) state.answers[qid] = [];
-  if (type === 'single') {
-    state.answers[qid] = [opt];
+function selectGender(g) {
+  state.answers.gender = g;
+  // 性別変更時、髪以外の選択肢が変わる可能性があるので nonHairConcerns をクリア
+  state.answers.nonHairConcerns = [];
+  state.answers.nonHairFocus = null;
+  state.answers.nonHairDeep = null;
+  renderProfile();
+}
+
+function selectAge(a) {
+  state.answers.age = a;
+  renderProfile();
+}
+
+function goToHair() { state.screen = 'hair'; render(); }
+
+// ====================================================================
+// Step2: 髪のお悩み
+// ====================================================================
+function renderHair() {
+  $headerSub.textContent = '髪のお悩み';
+  logStepView('hair', '髪悩み');
+  const selected = state.answers.hairConcerns || [];
+  let html = `<div>
+    <div class="step-label">髪のお悩み</div>
+    <div class="q-title">気になる髪のお悩みを教えてください</div>
+    <div class="q-note">複数選択可</div>
+    <div class="options">`;
+  HAIR_OPTIONS.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleHairOption('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('profile')">戻る</button>
+    <button class="btn btn-primary" onclick="goToNonHair()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function toggleHairOption(opt) {
+  const arr = state.answers.hairConcerns || [];
+  if (opt === '特になし') {
+    state.answers.hairConcerns = arr.includes(opt) ? [] : ['特になし'];
   } else {
-    const arr = state.answers[qid];
-    const i = arr.indexOf(opt);
-    if (i >= 0) arr.splice(i, 1);
-    else arr.push(opt);
+    const filtered = arr.filter(x => x !== '特になし');
+    const i = filtered.indexOf(opt);
+    if (i >= 0) filtered.splice(i, 1);
+    else filtered.push(opt);
+    state.answers.hairConcerns = filtered;
   }
-  renderQuestion();
+  renderHair();
 }
 
-function selectBranch(qid, value) {
-  state.answers[qid] = value;
-  if (qid === 'Q3') {
-    if (value === 'A') {
-      state.branch = 'A';
-      state.screen = 'booking';
-      render();
-    } else {
-      state.branch = 'B';
-      state.questions = QUESTIONS_BASE.slice().concat(QUESTIONS_B);
-      state.qIndex++;
-      render();
-    }
-  } else if (qid === 'Q8') {
-    if (value === 'BOOK') {
-      state.screen = 'booking';
-      render();
-    } else {
-      submitAnswers().then(() => {
-        state.screen = 'end';
-        render();
-      });
-    }
-  }
+function goToNonHair() { state.screen = 'non_hair'; render(); }
+
+// ====================================================================
+// Step3: 髪以外のお悩み(性別で出し分け)
+// ====================================================================
+function renderNonHair() {
+  $headerSub.textContent = '髪以外のお悩み';
+  logStepView('non_hair', '髪以外悩み');
+  const selected = state.answers.nonHairConcerns || [];
+  const opts = getNonHairOptions();
+  let html = `<div>
+    <div class="step-label">髪以外のお悩み</div>
+    <div class="q-title">髪以外で最近気になっていることはありますか？</div>
+    <div class="q-note">複数選択可</div>
+    <div class="options">`;
+  opts.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleNonHairOption('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('hair')">戻る</button>
+    <button class="btn btn-primary" onclick="goToDrug()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
 }
 
-function nextQuestion() {
-  if (state.qIndex < state.questions.length - 1) {
-    state.qIndex++;
+function toggleNonHairOption(opt) {
+  const arr = state.answers.nonHairConcerns || [];
+  if (opt === '特になし') {
+    state.answers.nonHairConcerns = arr.includes(opt) ? [] : ['特になし'];
+  } else {
+    const filtered = arr.filter(x => x !== '特になし');
+    const i = filtered.indexOf(opt);
+    if (i >= 0) filtered.splice(i, 1);
+    else filtered.push(opt);
+    state.answers.nonHairConcerns = filtered;
+  }
+  renderNonHair();
+}
+
+function goToDrug() { state.screen = 'drug'; render(); }
+
+// ====================================================================
+// Step4: お薬で解決するなら試したい?
+// ====================================================================
+function renderDrug() {
+  $headerSub.textContent = 'お薬での解決';
+  logStepView('drug', 'お薬意向');
+  let html = `<div>
+    <div class="step-label">お薬での解決</div>
+    <div class="q-title">上のお悩みをお薬で解決できる場合、試してみたいですか？</div>
+    <div class="options">`;
+  Q_DRUG_OPTIONS.forEach(opt => {
+    const sel = state.answers.drugIntent === opt.value ? 'selected' : '';
+    html += `<div class="option branch ${sel}" onclick="selectDrug('${opt.value}')">
+      <div class="radio"></div>
+      <div class="option-text">${escapeHtml(opt.label)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('non_hair')">戻る</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectDrug(value) {
+  state.answers.drugIntent = value;
+  if (value === 'no') {
+    state.screen = 'hair_type';
+    render();
+  } else {
+    state.bookingTrigger = 'drug_' + value;
+    state.screen = 'booking';
     render();
   }
 }
 
-function prevQuestion() {
-  if (state.qIndex > 0) {
-    state.qIndex--;
-    render();
-  }
+// ====================================================================
+// Step5: 髪質(共通質問・複数選択)
+// ====================================================================
+function renderHairType() {
+  $headerSub.textContent = '髪質について';
+  logStepView('hair_type', '髪質');
+  const selected = state.answers.hairType || [];
+  let html = `<div>
+    <div class="step-label">髪質について</div>
+    <div class="q-title">あなたの髪質について教えてください</div>
+    <div class="q-note">あてはまるものを全て選んでください(複数選択可)</div>
+    <div class="options">`;
+  HAIR_TYPE_OPTIONS.forEach(opt => {
+    const sel = selected.includes(opt) ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="toggleHairType('${escapeAttr(opt)}')">
+      <div class="checkbox">✓</div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  const canProceed = selected.length > 0;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('drug')">戻る</button>
+    <button class="btn btn-primary" onclick="goToNonHairFocus()" ${canProceed ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
 }
 
-function goBackToIntro() {
-  state.screen = 'intro';
-  state.qIndex = 0;
-  render();
+function toggleHairType(opt) {
+  const arr = state.answers.hairType || [];
+  const i = arr.indexOf(opt);
+  if (i >= 0) arr.splice(i, 1);
+  else arr.push(opt);
+  state.answers.hairType = arr;
+  renderHairType();
 }
 
-function goBackFromBooking() {
-  state.screen = 'question';
-  if (state.branch === 'A') {
-    state.qIndex = 2;
+function goToNonHairFocus() {
+  // 髪以外悩みなしならスキップして最終分岐へ
+  const concerns = (state.answers.nonHairConcerns || []).filter(a => a !== '特になし');
+  if (concerns.length === 0) {
+    state.screen = 'final_branch';
+  } else if (concerns.length === 1) {
+    state.answers.nonHairFocus = concerns[0];
+    state.screen = 'non_hair_deep';
   } else {
-    state.qIndex = state.questions.length - 1;
+    state.screen = 'non_hair_focus';
   }
   render();
 }
 
+// ====================================================================
+// Step6: 髪以外で一番気になっているのは?(複数選択時のみ)
+// ====================================================================
+function renderNonHairFocus() {
+  $headerSub.textContent = '一番気になるお悩み';
+  logStepView('non_hair_focus', '髪以外Focus');
+  const concerns = (state.answers.nonHairConcerns || []).filter(a => a !== '特になし');
+  let html = `<div>
+    <div class="step-label">一番気になるお悩み</div>
+    <div class="q-title">髪以外で、一番気になっているのはどれですか？</div>
+    <div class="q-note">1つお選びください</div>
+    <div class="options">`;
+  concerns.forEach(opt => {
+    const sel = state.answers.nonHairFocus === opt ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="selectNonHairFocus('${escapeAttr(opt)}')">
+      <div class="radio"></div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBack('hair_type')">戻る</button>
+    <button class="btn btn-primary" onclick="goToNonHairDeep()" ${state.answers.nonHairFocus ? '' : 'disabled'}>次へ</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectNonHairFocus(opt) {
+  state.answers.nonHairFocus = opt;
+  state.answers.nonHairDeep = null;
+  renderNonHairFocus();
+}
+
+function goToNonHairDeep() { state.screen = 'non_hair_deep'; render(); }
+
+// ====================================================================
+// Step7: 髪以外深掘り(1問)
+// ====================================================================
+function renderNonHairDeep() {
+  const focus = state.answers.nonHairFocus;
+  const q = NON_HAIR_DEEP_DIVE[focus];
+  if (!q) {
+    state.screen = 'final_branch';
+    render();
+    return;
+  }
+  $headerSub.textContent = `${focus} について`;
+  logStepView('non_hair_deep', '髪以外深掘り');
+  let html = `<div>
+    <div class="step-label">${escapeHtml(focus)} について</div>
+    <div class="q-title">${escapeHtml(q.q)}</div>
+    <div class="options">`;
+  q.options.forEach(opt => {
+    const sel = state.answers.nonHairDeep === opt ? 'selected' : '';
+    html += `<div class="option ${sel}" onclick="selectNonHairDeep('${escapeAttr(opt)}')">
+      <div class="radio"></div>
+      <div class="option-text">${escapeHtml(opt)}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBackFromNonHairDeep()">戻る</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectNonHairDeep(opt) {
+  state.answers.nonHairDeep = opt;
+  state.screen = 'final_branch';
+  render();
+}
+
+function goBackFromNonHairDeep() {
+  const concerns = (state.answers.nonHairConcerns || []).filter(a => a !== '特になし');
+  if (concerns.length > 1) {
+    state.screen = 'non_hair_focus';
+  } else {
+    state.screen = 'hair_type';
+  }
+  render();
+}
+
+// ====================================================================
+// Step8: 最終分岐
+// ====================================================================
+function renderFinalBranch() {
+  $headerSub.textContent = '最後の確認';
+  logStepView('final_branch', '最終分岐');
+  let html = `<div>
+    <div class="step-label">あと少しです</div>
+    <div class="q-title">インナービューティーについて、当サロン提携のカウンセラーに詳しく聞いてみますか？</div>
+    <div class="q-note">カウンセラーがあなたに合うケアや生活習慣のアドバイスを5分でご提案します</div>
+    <div class="options">`;
+  const optYes = state.answers.finalBranch === 'yes' ? 'selected' : '';
+  const optNo = state.answers.finalBranch === 'no' ? 'selected' : '';
+  html += `<div class="option branch ${optYes}" onclick="selectFinalBranch('yes')">
+    <div class="radio"></div>
+    <div class="option-text">
+      <div>はい、聞いてみたい</div>
+      <span class="option-sub">→ 5分のオンラインカウンセリングを予約します</span>
+    </div>
+  </div>`;
+  html += `<div class="option branch ${optNo}" onclick="selectFinalBranch('no')">
+    <div class="radio"></div>
+    <div class="option-text">
+      <div>今はまだ大丈夫</div>
+      <span class="option-sub">→ アンケートを終了します(特典クーポンあり)</span>
+    </div>
+  </div>`;
+  html += `</div>`;
+  html += `<div class="btn-row">
+    <button class="btn btn-secondary" onclick="goBackFromFinalBranch()">戻る</button>
+  </div></div>`;
+  $content.innerHTML = html;
+  updateProgress();
+}
+
+function selectFinalBranch(val) {
+  state.answers.finalBranch = val;
+  if (val === 'yes') {
+    state.bookingTrigger = 'final_branch';
+    state.screen = 'booking';
+    render();
+  } else {
+    submitAnswers().then(() => {
+      state.screen = 'coupon_end';
+      render();
+    });
+  }
+}
+
+function goBackFromFinalBranch() {
+  const concerns = (state.answers.nonHairConcerns || []).filter(a => a !== '特になし');
+  if (concerns.length > 0) {
+    state.screen = 'non_hair_deep';
+  } else {
+    state.screen = 'hair_type';
+  }
+  render();
+}
+
+// ====================================================================
+// 予約画面
+// ====================================================================
 function generateTimeSlots(isToday) {
   const slots = [];
-  const startH = isToday ? 18 : 10;
+  const startH = isToday ? Math.max(new Date().getHours() + 1, 10) : 10;
   const endH = 21;
   for (let h = startH; h <= endH; h++) {
     slots.push(pad(h) + ':00');
@@ -599,8 +984,23 @@ function generateTimeSlots(isToday) {
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
+function getDateForType(type) {
+  const today = new Date();
+  if (type === 'today') return today;
+  if (type === 'tomorrow') {
+    const t = new Date(today);
+    t.setDate(t.getDate() + 1);
+    return t;
+  }
+  if (type === 'other' && state.bookingOtherDate) {
+    return new Date(state.bookingOtherDate);
+  }
+  return today;
+}
+
 function renderBooking() {
-  $headerSub.textContent = '予約画面';
+  $headerSub.textContent = '5分のオンラインカウンセリング 予約';
+  logStepView('booking', '予約画面');
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -609,45 +1009,101 @@ function renderBooking() {
   const todayLabel = fmt(today);
   const tomorrowLabel = fmt(tomorrow);
 
-  const isToday = state.bookingDate === 'today';
-  const slots = generateTimeSlots(isToday);
+  const dateType = state.bookingDateType;
+  const isToday = dateType === 'today';
+  const isOther = dateType === 'other';
+  const slots = isOther ? generateTimeSlots(false) : generateTimeSlots(isToday);
+
+  const minOther = new Date(today);
+  minOther.setDate(minOther.getDate() + 2);
+  const minOtherStr = minOther.toISOString().slice(0, 10);
+
+  // 来訪トリガーで文言を出し分け
+  const isFromDrug = state.bookingTrigger && String(state.bookingTrigger).indexOf('drug_') === 0;
+  const noteText = isFromDrug
+    ? 'サロン提携のカウンセラーがお話を伺います'
+    : 'サロン提携のカウンセラーが、あなたに合うケアや生活習慣をご提案します';
 
   let html = `<div>
-    <div class="step-label">最終ステップ</div>
-    <div class="q-title">30分の無料カウンセリングの日時を選択</div>
-    <div class="q-note">サロン提携カウンセラーとの30分の無料カウンセリングです</div>
-    <div class="required-note">★ 当日中の予約をおすすめしています</div>
+    <div class="step-label">5分のオンラインカウンセリング</div>
+    <div class="q-title">日時を選択してください</div>
+    <div class="q-note">${escapeHtml(noteText)}</div>
+    <div class="required-note">★ 当日中の予約が最もおすすめです</div>
     <div class="booking-tabs">
-      <div class="booking-tab ${isToday ? 'active' : ''}" onclick="selectDate('today')">
+      <div class="booking-tab ${isToday ? 'active' : ''}" onclick="selectDateType('today')">
         当日 <span class="booking-tab-day">${todayLabel}</span>
       </div>
-      <div class="booking-tab ${!isToday ? 'active' : ''}" onclick="selectDate('tomorrow')">
+      <div class="booking-tab ${dateType === 'tomorrow' ? 'active' : ''}" onclick="selectDateType('tomorrow')">
         翌日 <span class="booking-tab-day">${tomorrowLabel}</span>
       </div>
-    </div>
-    <div class="time-grid">`;
-  slots.forEach(slot => {
-    const sel = state.bookingSlot === slot ? 'selected' : '';
-    html += `<div class="time-slot ${sel}" onclick="selectSlot('${slot}')">${slot}</div>`;
-  });
-  html += `</div>`;
-  if (state.bookingSlot) {
-    html += `<div class="summary-card">
-      <div class="summary-label">選択中の予約枠</div>
-      <div class="summary-value">${isToday ? todayLabel : tomorrowLabel} ${state.bookingSlot}〜</div>
+      <div class="booking-tab ${isOther ? 'active' : ''}" onclick="selectDateType('other')">
+        別日
+      </div>
+    </div>`;
+
+  if (isOther) {
+    html += `<div class="date-picker-wrap">
+      <div class="date-picker-label">日付を選択</div>
+      <input type="date" class="date-picker" min="${minOtherStr}" value="${state.bookingOtherDate || ''}" onchange="setBookingOtherDate(this.value)">
     </div>`;
   }
+
+  if (!isOther || state.bookingOtherDate) {
+    html += `<div class="time-grid">`;
+    slots.forEach(slot => {
+      const sel = state.bookingSlot === slot ? 'selected' : '';
+      html += `<div class="time-slot ${sel}" onclick="selectSlot('${slot}')">${slot}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (state.bookingSlot) {
+    const d = getDateForType(dateType);
+    html += `<div class="summary-card">
+      <div class="summary-label">選択中の予約枠</div>
+      <div class="summary-value">${fmt(d)} ${state.bookingSlot}〜</div>
+    </div>`;
+  }
+
   html += `<div class="btn-row">
     <button class="btn btn-secondary" onclick="goBackFromBooking()">戻る</button>
     <button class="btn btn-primary" onclick="confirmBooking()" ${state.bookingSlot ? '' : 'disabled'}>この日時で予約を確定する</button>
-  </div>`;
-  html += `</div>`;
+  </div></div>`;
   $content.innerHTML = html;
   updateProgress();
 }
 
-function selectDate(d) { state.bookingDate = d; state.bookingSlot = null; render(); }
-function selectSlot(slot) { state.bookingSlot = slot; render(); }
+function selectDateType(t) {
+  state.bookingDateType = t;
+  state.bookingSlot = null;
+  if (t !== 'other') state.bookingOtherDate = '';
+  render();
+}
+
+function setBookingOtherDate(val) {
+  state.bookingOtherDate = val;
+  state.bookingSlot = null;
+  render();
+}
+
+function selectSlot(slot) {
+  state.bookingSlot = slot;
+  render();
+}
+
+function goBackFromBooking() {
+  const trigger = state.bookingTrigger;
+  if (trigger === 'final_branch') {
+    state.screen = 'final_branch';
+  } else if (trigger === 'from_bookmark') {
+    state.screen = 'coupon_end';
+  } else if (trigger === 'from_coupon') {
+    state.screen = 'coupon_end';
+  } else {
+    state.screen = 'drug';
+  }
+  render();
+}
 
 async function confirmBooking() {
   const ok = await submitAnswers();
@@ -657,22 +1113,29 @@ async function confirmBooking() {
   }
 }
 
+// ====================================================================
+// データ送信
+// ====================================================================
 async function submitAnswers() {
   $loading.classList.add('active');
   const payload = {
+    type: 'final_submit',
+    sessionId: state.sessionId,
     uid: state.uid,
-    branch: state.branch || 'A',
     startedAt: state.startedAt,
     submittedAt: new Date().toISOString(),
-    q1: (state.answers.Q1 || []).join('|'),
-    q2: (state.answers.Q2 || []).join('|'),
-    q3: state.answers.Q3 || '',
-    q4: (state.answers.Q4 || []).join('|'),
-    q5: (state.answers.Q5 || []).join('|'),
-    q6: (state.answers.Q6 || []).join('|'),
-    q7: (state.answers.Q7 || []).join('|'),
-    q8: state.answers.Q8 || '',
-    bookingDate: state.screen === 'booking' || state.bookingSlot ? state.bookingDate : '',
+    gender: state.answers.gender || '',
+    age: state.answers.age || '',
+    hairConcerns: (state.answers.hairConcerns || []).join('|'),
+    nonHairConcerns: (state.answers.nonHairConcerns || []).join('|'),
+    drugIntent: state.answers.drugIntent || '',
+    hairType: (state.answers.hairType || []).join('|'),
+    nonHairFocus: state.answers.nonHairFocus || '',
+    nonHairDeep: state.answers.nonHairDeep || '',
+    finalBranch: state.answers.finalBranch || '',
+    bookingTrigger: state.bookingTrigger || '',
+    bookingDateType: state.bookingDateType || '',
+    bookingOtherDate: state.bookingOtherDate || '',
     bookingSlot: state.bookingSlot || '',
     userAgent: navigator.userAgent
   };
@@ -694,15 +1157,15 @@ async function submitAnswers() {
   }
 }
 
+// ====================================================================
+// 予約完了
+// ====================================================================
 function renderCompletion() {
   $headerSub.textContent = '予約完了';
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const date = state.bookingDate === 'today' ? today : tomorrow;
+  logStepView('completion', '予約完了');
+  const d = getDateForType(state.bookingDateType);
   const wd = ['日','月','火','水','木','金','土'];
   const fmt = (d) => `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 (${wd[d.getDay()]})`;
-
   $content.innerHTML = `
     <div class="completion-screen">
       <div class="complete-icon-wrap success">✓</div>
@@ -710,8 +1173,8 @@ function renderCompletion() {
       <div class="complete-detail">
         <div class="complete-detail-row">
           <div class="complete-detail-label">予約日時</div>
-          <div class="complete-detail-value">${fmt(date)}</div>
-          <div class="complete-detail-value">${state.bookingSlot}〜 (30分)</div>
+          <div class="complete-detail-value">${fmt(d)}</div>
+          <div class="complete-detail-value">${state.bookingSlot}〜 (5分)</div>
         </div>
       </div>
       <div class="complete-foot">
@@ -726,15 +1189,44 @@ function renderCompletion() {
   updateProgress();
 }
 
-function renderEnd() {
-  $headerSub.textContent = 'ご記入ありがとうございました';
+// ====================================================================
+// クーポン終了画面
+// ====================================================================
+function renderCouponEnd() {
+  $headerSub.textContent = 'ご回答ありがとうございました';
+  logStepView('coupon_end', 'クーポン画面');
   $content.innerHTML = `
     <div class="end-screen">
-      <div class="complete-icon-wrap end">🙏</div>
+      <div class="complete-icon-wrap coupon">🎁</div>
       <div class="complete-title">ご回答ありがとうございました</div>
-      <div class="complete-foot">
-        またお気軽にご相談ください。<br>
-        本日のご来店、ありがとうございました。
+      <div class="coupon-card">
+        <div class="coupon-label">★ アンケート回答特典 ★</div>
+        <div class="coupon-amount">${escapeHtml(COUPON_AMOUNT)}</div>
+        <div class="coupon-name">${escapeHtml(COUPON_NAME)}</div>
+      </div>
+      <div class="complete-foot" style="text-align:left;">
+        次のご来店時、店員さんに<br>
+        <strong style="color:var(--accent)">「カウンセリング回答済み」</strong><br>
+        とお声がけください。
+      </div>
+      <div class="action-row">
+        <div class="action-card" onclick="tryBookmark()">
+          <div class="action-icon">🔖</div>
+          <div class="action-text">
+            <div class="action-title">このページをブックマーク</div>
+            <div class="action-desc">後で気になったらいつでも予約できます</div>
+          </div>
+        </div>
+        <div class="action-card" onclick="goToBookingFromCoupon()">
+          <div class="action-icon">📅</div>
+          <div class="action-text">
+            <div class="action-title">気が変わった方はこちら</div>
+            <div class="action-desc">5分のオンラインカウンセリングを今すぐ予約</div>
+          </div>
+        </div>
+      </div>
+      <div class="bookmark-note">
+        💡 ブックマークしておくと、お困りの際にいつでも提携カウンセラーへご相談できます
       </div>
       <a href="https://line.me/R/oaMessage/${LINE_OA_BASIC_ID}/" class="line-back-link">LINEに戻る</a>
     </div>
@@ -742,8 +1234,23 @@ function renderEnd() {
   updateProgress();
 }
 
+function tryBookmark() {
+  alert('画面右上のメニューから「ブックマーク」「お気に入りに追加」を選んでください。\n\n後でこのページを開くと、いつでも予約画面にアクセスできます。');
+}
+
+function goToBookingFromCoupon() {
+  state.bookingTrigger = 'from_coupon';
+  state.screen = 'booking';
+  state.bookingSlot = null;
+  render();
+}
+
+// ====================================================================
+// エラー
+// ====================================================================
 function renderError() {
   $headerSub.textContent = '送信エラー';
+  logStepView('error', 'エラー');
   $content.innerHTML = `
     <div class="end-screen">
       <div class="complete-icon-wrap error">!</div>
@@ -757,17 +1264,61 @@ function renderError() {
   updateProgress();
 }
 
+// ====================================================================
+// 戻る
+// ====================================================================
+function goBackToIntro() { state.screen = 'intro'; render(); }
+function goBack(target) { state.screen = target; render(); }
+
+// ====================================================================
+// utility
+// ====================================================================
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function escapeAttr(s) {
+  return String(s).replace(/[&<>"'\\]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'\\\'','\\':'\\\\'}[c]));
+}
 
+// ====================================================================
+// 離脱トラッキング
+// ====================================================================
+window.addEventListener('beforeunload', function() {
+  if (['completion','coupon_end','error'].includes(state.screen)) return;
+  const payload = {
+    type: 'exit',
+    sessionId: state.sessionId,
+    uid: state.uid,
+    step: state.screen,
+    timestamp: new Date().toISOString()
+  };
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(GAS_URL, JSON.stringify(payload));
+  }
+});
+
+// ====================================================================
+// メインルーター
+// ====================================================================
 function render() {
   if (state.screen === 'intro') renderIntro();
-  else if (state.screen === 'question') renderQuestion();
+  else if (state.screen === 'profile') renderProfile();
+  else if (state.screen === 'hair') renderHair();
+  else if (state.screen === 'non_hair') renderNonHair();
+  else if (state.screen === 'drug') renderDrug();
+  else if (state.screen === 'hair_type') renderHairType();
+  else if (state.screen === 'non_hair_focus') renderNonHairFocus();
+  else if (state.screen === 'non_hair_deep') renderNonHairDeep();
+  else if (state.screen === 'final_branch') renderFinalBranch();
   else if (state.screen === 'booking') renderBooking();
   else if (state.screen === 'completion') renderCompletion();
-  else if (state.screen === 'end') renderEnd();
+  else if (state.screen === 'coupon_end') renderCouponEnd();
   else if (state.screen === 'error') renderError();
+}
+
+if (window.location.hash === '#book') {
+  state.bookingTrigger = 'from_bookmark';
+  state.screen = 'booking';
 }
 
 render();
