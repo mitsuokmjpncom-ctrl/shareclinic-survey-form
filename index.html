@@ -461,9 +461,9 @@ const HAIR_CARE_OPTIONS = [
 
 // 食事(複数選択)
 const MEAL_OPTIONS = [
-  'タンパク質(肉・魚・卵・豆)が不足しがち',
-  '鉄分・ミネラルが足りていない気がする',
-  '野菜・ビタミンが足りない',
+  '肉・魚・卵が足りない',
+  '鉄分・ミネラルが足りない',
+  '野菜が足りない',
   '外食・コンビニ食が多い',
   '髪に良い食事を意識している',
   '特に気にしていない'
@@ -489,7 +489,7 @@ const Q_DRUG_OPTIONS = [
 // 髪以外悩み 深掘り2問(各カテゴリ) — type: 'multi' or 'single'
 const NON_HAIR_DEEP_DIVE = {
   '肌・肌荒れ・ニキビ': [
-    { q: '気になる症状は?', type: 'multi', options: ['ニキビ・吹き出物', '乾燥', 'くすみ・シミ', 'たるみ'] },
+    { q: '気になる症状は?', type: 'multi', options: ['ニキビ・吹き出物', '乾燥', 'シミ・くすみ', 'たるみ'] },
     { q: '気になる部位は?', type: 'multi', options: ['顔全体', 'Tゾーン', 'Uゾーン(あご周り)', 'フェイスライン'] }
   ],
   '体型・ダイエット': [
@@ -505,7 +505,7 @@ const NON_HAIR_DEEP_DIVE = {
     { q: '日常への影響度は?', type: 'single', options: ['日常に支障あり', '時々困る', '気になる程度', '我慢している'] }
   ],
   '栄養・体調・冷え': [
-    { q: '気になる症状は?', type: 'multi', options: ['冷え', '疲れやすい', '貧血気味', '便秘・むくみ'] },
+    { q: '気になる症状は?', type: 'multi', options: ['冷え', '疲れやすい', '貧血気味', 'むくみ・便秘'] },
     { q: '気になる期間は?', type: 'single', options: ['最近(数週間)', '数ヶ月', '年単位', '体質だと思っている'] }
   ]
 };
@@ -1121,7 +1121,7 @@ function renderFinalBranch() {
   let html = `<div>
     <div class="step-label">あと少しです</div>
     <div class="q-title">インナービューティーについて、当サロン提携のカウンセラーに詳しく聞いてみますか？</div>
-    <div class="q-note">カウンセラーがあなたに合うケアや生活習慣のアドバイスを5分でご提案します</div>
+    <div class="q-note">☎️ カウンセリング方法：電話での相談(約5分)<br>カウンセラーがあなたに合うケアや生活習慣のアドバイスをご提案します</div>
     <div class="options">`;
   const optYes = state.answers.finalBranch === 'yes' ? 'selected' : '';
   const optNo = state.answers.finalBranch === 'no' ? 'selected' : '';
@@ -1390,9 +1390,8 @@ function renderCompletion() {
       </div>
       <div class="complete-foot">
         ご予約ありがとうございます。<br>
-        確認メッセージをLINEでお送りします。<br>
-        お時間になりましたら、カウンセラーから<br>
-        ご連絡いたします。
+        ☎️ 予約時間にカウンセラーからお電話があります。<br>
+        よろしくお願いいたします。
       </div>
       <a href="https://line.me/R/oaMessage/${LINE_OA_BASIC_ID}/" class="line-back-link">LINEに戻る</a>
     </div>
@@ -1488,6 +1487,23 @@ function escapeAttr(s) {
 // ====================================================================
 // 離脱トラッキング
 // ====================================================================
+function getSelectedValue(screen) {
+  switch(screen) {
+    case 'profile': return state.answers.age || state.answers.gender || '';
+    case 'hair': return (state.answers.hairConcerns || []).join('|');
+    case 'non_hair': return (state.answers.nonHairConcerns || []).join('|');
+    case 'drug': return state.answers.drugIntent || '';
+    case 'hair_type': return (state.answers.hairType || []).join('|');
+    case 'hair_care': return (state.answers.hairCare || []).join('|');
+    case 'meal': return (state.answers.meal || []).join('|');
+    case 'sleep': return (state.answers.sleep || []).join('|');
+    case 'non_hair_focus': return state.answers.nonHairFocus || '';
+    case 'non_hair_deep': return JSON.stringify(state.answers.nonHairDeep || []);
+    case 'final_branch': return state.answers.finalBranch || '';
+    default: return '';
+  }
+}
+
 window.addEventListener('beforeunload', function() {
   if (['completion','coupon_end','error'].includes(state.screen)) return;
   const payload = {
@@ -1495,6 +1511,7 @@ window.addEventListener('beforeunload', function() {
     sessionId: state.sessionId,
     uid: state.uid,
     step: state.screen,
+    selectedValue: getSelectedValue(state.screen),
     timestamp: new Date().toISOString()
   };
   if (navigator.sendBeacon) {
