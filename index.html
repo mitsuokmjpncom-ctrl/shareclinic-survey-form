@@ -1136,7 +1136,7 @@ function renderFinalBranch() {
     <div class="radio"></div>
     <div class="option-text">
       <div>今はまだ大丈夫</div>
-      <span class="option-sub">→ アンケートを終了します(特典クーポンあり)</span>
+      <span class="option-sub">→ アンケートを終了します</span>
     </div>
   </div>`;
   html += `</div>`;
@@ -1410,15 +1410,9 @@ function renderCouponEnd() {
     <div class="end-screen">
       <div class="complete-icon-wrap coupon">🎁</div>
       <div class="complete-title">ご回答ありがとうございました</div>
-      <div class="coupon-card">
-        <div class="coupon-label">★ アンケート回答特典 ★</div>
-        <div class="coupon-amount">${escapeHtml(COUPON_AMOUNT)}</div>
-        <div class="coupon-name">${escapeHtml(COUPON_NAME)}</div>
-      </div>
-      <div class="complete-foot" style="text-align:left;">
-        次のご来店時、店員さんに<br>
-        <strong style="color:var(--accent)">「カウンセリング回答済み」</strong><br>
-        とお声がけください。
+      <div class="complete-foot" style="text-align:left; margin-top: 30px;">
+        ご協力いただきありがとうございます。<br>
+        いただいた情報はカウンセリングの際に活用させていただきます。
       </div>
       <div class="action-row">
         <div class="action-card" onclick="tryBookmark()">
